@@ -1,0 +1,13 @@
+# Requried metedata fo the sonar qube 
+sonar.projectkey=sqp_45204e83104a461a7a55e1027df289306cdd7b1e
+sonar.projectname=testing
+sonar.projectversion=1.0
+
+#source path of the of project
+sonar.source=opt,job
+
+#lanaguage of the project 
+sonar.language=java
+
+#Encoding of the source file
+sonar.sourcEncoding=UFT-8
