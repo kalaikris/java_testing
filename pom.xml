@@ -6,7 +6,7 @@
 
     <groupId>com.sonarqube.example</groupId>
     <artifactId>sonarqube-maven-example</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0.0</version>
     <packaging>war</packaging>
 
     <name>Example of basic Maven project to integrate with SonarQube</name>
