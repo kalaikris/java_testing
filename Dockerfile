@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the WAR file into the container
-COPY /var/lib/jenkins/workspace/javaapp/java_testing/target/sonarqube-maven-example-2.0.2.war /app/myapp.war
+COPY ./target/sonarqube-maven-example-2.0.2.war /app/myapp.war
 
 # Expose the port your Spring Boot application listens on/var/lib/jenkins/workspace/javaapp/java_testing/target
 EXPOSE 8080
