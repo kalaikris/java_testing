@@ -50,9 +50,9 @@
             </activation>
             <properties>
                 <!-- Optional URL to server. Default value is http://localhost:9000 -->
-                <sonar.host.url>http://15.206.27.95:9000</sonar.host.url>
-                <sonar.login>cbb4d54845cb03f2daf2774c810fe4c2989827ae</sonar.login>
-                <sonar.projectKey>testing_maven</sonar.projectKey>
+                <sonar.host.url>http://192.168.1.10:9000</sonar.host.url>
+                <sonar.login>sqp_9c416961554838f0fb2377a3c7805bbfae90ab46</sonar.login>
+                <sonar.projectKey>java-app</sonar.projectKey>
             </properties>
         </profile>
         <profile>
