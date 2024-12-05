@@ -1,0 +1,106 @@
+pipeline {
+    agent any
+
+    tools {
+        maven "maven_new"
+    }
+
+    environment {
+        // Reference the credential from Jenkins
+        SONAR_TOKEN = credentials('sonar-qube-token')  // 'SONAR_TOKEN' is the ID of your Jenkins secret
+        DOCKER_IMAGE = 'kalaikris/javaapplication'
+    }
+
+    stages {
+        stage('clean-process') 
+            steps {
+                // Clean up previous build files if needed
+                script {
+                    // Remove the java_testing directory before checking out the latest code
+                    sh 'rm -rf java_testing'
+                }
+            }
+        }
+
+        stage('GIT_CHECKOUT') {
+            steps {
+                // Checkout the GitHub repository
+                script {
+                    sh 'git clone https://github.com/kalaikris/java_testing.git'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the application using Maven
+                script {
+                    dir('java_testing') {
+                        sh 'mvn clean package'
+                    }
+                }
+            }
+        }
+
+        stage('sonar-qube-scanner') {
+            steps {
+                // Run SonarQube analysis
+                withSonarQubeEnv('sonar-qube') {
+                    script {
+                        dir('java_testing') {
+                            sh 'mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Docker-image-build') {
+            steps {
+                // Build the Docker image
+                script {
+                    dir('java_testing') {
+                        sh 'docker build -t ${DOCKER_IMAGE} .'
+                        sh 'docker image ls'  // List Docker images to verify the build
+                    }
+                }
+            }
+        }
+
+        stage('docker-login') {
+            steps {
+                // Docker login to the private registry
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_USERNAME1', usernameVariable: 'docker_user', passwordVariable: 'docker_passwd')]) {
+                    script {
+                        sh 'docker login -u ${docker_user} -p ${docker_passwd}'
+                        sh 'docker push ${DOCKER_IMAGE}:latest'
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            agent {
+                // Specify the node label where this stage should run
+                node {
+                    label 'k8s'  // This is the label of your Kubernetes node
+                }
+            }
+            steps {
+                // Checkout the GitHub repository
+                script {
+                    sh '''cd /home/kalai/k8s
+                    kubectl apply -f deployment.yaml'''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Docker image pushed successfully!"
+        }
+        failure {
+            echo "Pipeline failed."
+        }
+    }
+}
